@@ -17,7 +17,7 @@ return [
 
     'paths' => ['*'], 
     'allowed_methods' => ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'], 
-    'allowed_origins' => [''], 
+    'allowed_origins' => ['*'], 
     'allowed_origins_patterns' => [],
     'allowed_headers' => ['*'], 
     'exposed_headers' => [],

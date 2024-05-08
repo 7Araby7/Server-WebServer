@@ -24,7 +24,7 @@ Route::post('/login', [AuthController::class, 'login'])->withoutMiddleware(['web
 
 Route::post('/logout', [AuthController::class, 'logout'])->WithoutMiddleware(['web']);
 
-Route::post('/usuarios/candidato', [Controller::class, 'cadastrarCand'])->withoutMiddleware(['web']);
+Route::post('/usuarios/candidatos', [Controller::class, 'cadastrarCand'])->withoutMiddleware(['web']);
 
 Route::post('/usuarios/empresa', [Controller::class, 'cadastrarEmp'])->withoutMiddleware(['web']);
 
