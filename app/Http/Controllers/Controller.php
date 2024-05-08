@@ -134,7 +134,7 @@ class Controller extends BaseController
             }
     
         } catch (\Exception $e) {
-            return response()->json(['mensagem' => 'erro interno: ' . $e->getMessage()], 401);
+            return response()->json(['mensagem' => 'erro interno: ' . $e->getMessage()], 500);
         }
     }
 
