@@ -29,3 +29,10 @@ Route::post('/usuarios/candidatos', [Controller::class, 'cadastrarCand'])->witho
 Route::post('/usuarios/empresa', [Controller::class, 'cadastrarEmp'])->withoutMiddleware(['web']);
 
 Route::get('/usuario', [Controller::class, 'lerUsuario'])->withoutMiddleware(['web']);
+
+Route::put('/usuario', [Controller::class, 'editarUsuario'])->withoutMiddleware(['web']);
+
+Route::delete('/usuario', [Controller::class, 'apagarUsuario'])->withoutMiddleware(['web']);
+
+Route::get('/competencias', [Controller::class, 'listarCompetencias'])->withoutMiddleware(['web']);
+
