@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Hash;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use App\Models\User;
 
-class AuthController extends Controller
+class AuthController extends UserController
 {
     public function login(Request $request)
     {
@@ -28,7 +28,7 @@ class AuthController extends Controller
             $user = User::where('email', $credentials['email'])->first();
 
             if (!$user || !Hash::check($credentials['senha'], $user->senha)) {
-                return response()->json(['mensagem' => 'E-mail ou senha não encontrados'], 401);
+                return response()->json(['mensagem' => 'E-mail ou senha incorretos'], 401);
             }
 
             $token = JWTAuth::fromUser($user);

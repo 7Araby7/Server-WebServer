@@ -2,8 +2,11 @@
 
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CompController;
+use App\Http\Controllers\VagaController;
+use App\Http\Controllers\RamoController;
 
 /*
 |--------------------------------------------------------------------------
@@ -24,15 +27,26 @@ Route::post('/login', [AuthController::class, 'login'])->withoutMiddleware(['web
 
 Route::post('/logout', [AuthController::class, 'logout'])->WithoutMiddleware(['web']);
 
-Route::post('/usuarios/candidatos', [Controller::class, 'cadastrarCand'])->withoutMiddleware(['web']);
+Route::post('/usuarios/candidatos', [UserController::class, 'cadastrarCand'])->withoutMiddleware(['web']);
 
-Route::post('/usuarios/empresa', [Controller::class, 'cadastrarEmp'])->withoutMiddleware(['web']);
+Route::post('/usuarios/empresa', [UserController::class, 'cadastrarEmp'])->withoutMiddleware(['web']);
 
-Route::get('/usuario', [Controller::class, 'lerUsuario'])->withoutMiddleware(['web']);
+Route::get('/usuario', [UserController::class, 'lerUsuario'])->withoutMiddleware(['web']);
 
-Route::put('/usuario', [Controller::class, 'editarUsuario'])->withoutMiddleware(['web']);
+Route::put('/usuario', [UserController::class, 'editarUsuario'])->withoutMiddleware(['web']);
 
-Route::delete('/usuario', [Controller::class, 'apagarUsuario'])->withoutMiddleware(['web']);
+Route::delete('/usuario', [UserController::class, 'apagarUsuario'])->withoutMiddleware(['web']);
 
-Route::get('/competencias', [Controller::class, 'listarCompetencias'])->withoutMiddleware(['web']);
+Route::get('/competencias', [CompController::class, 'listarCompetencias'])->withoutMiddleware(['web']);
 
+Route::get('/ramos', [RamoController::class, 'listarRamos'])->withoutMiddleware(['web']);
+
+Route::post('/vagas', [VagaController::class, 'cadastrarVaga'])->withoutMiddleware(['web']);
+
+Route::get('/vagas', [VagaController::class, 'listarVagas'])->withoutMiddleware(['web']);
+
+Route::put('/vagas/{id}', [VagaController::class, 'editarVaga'])->withoutMiddleware(['web']);
+
+Route::get('/vagas/{id}', [VagaController::class, 'buscarVaga'])->withoutMiddleware(['web']);
+
+Route::delete('/vagas/{id}', [VagaController::class, 'excluirVaga'])->withoutMiddleware(['web']);

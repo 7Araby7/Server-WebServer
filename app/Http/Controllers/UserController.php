@@ -13,7 +13,7 @@ use App\Models\Competencia;
 use App\Models\Experiencia;
 use App\Models\CompetenciaUser;
 
-class Controller extends BaseController
+class UserController extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
@@ -91,15 +91,10 @@ class Controller extends BaseController
 
             $user = User::where('token', $token)->first();
 
-            $competenciaIds = CompetenciaUser::where('user_id', $user->id)->pluck('competencia_id');
-
-            $competencias = Competencia::whereIn('id', $competenciaIds)->get();
-
-            $experiencias = Experiencia::where('user_id', $user->id)->get();
-
+            
             if ($user) {
                 if ($user->tipo === 'empresa') {
-
+                    
                     return response()->json([
                         'nome' => $user->nome,
                         'email' => $user->email,
@@ -108,6 +103,11 @@ class Controller extends BaseController
                         'tipo' => $user->tipo,
                     ], 200);
                 } else {
+                    $competenciaIds = CompetenciaUser::where('user_id', $user->id)->pluck('competencia_id');
+        
+                    $competencias = Competencia::whereIn('id', $competenciaIds)->get();
+        
+                    $experiencias = Experiencia::where('user_id', $user->id)->get();
                     return response()->json([
                         'nome' => $user->nome,
                         'email' => $user->email,
@@ -243,14 +243,4 @@ class Controller extends BaseController
         }
     }
 
-    public function listarCompetencias(Request $request)
-    {
-        try {
-            $competencias = Competencia::all();
-
-            return response()->json($competencias, 200);
-        } catch (\Exception $e) {
-            return response()->json(['mensagem' => 'Erro interno: ' . $e->getMessage()], 500);
-        }
-    }
 }
