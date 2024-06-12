@@ -134,7 +134,7 @@ class VagaController extends BaseController
                 $competenciaVaga->save();
             }
 
-            return response()->json(['mensagem' => 'Vaga atualizada com sucesso'], 200);
+            return response()->json(['mensagem' => 'Vaga atualizada com sucesso'], 201);
         } catch (\Exception $e) {
             return response()->json(['mensagem' => 'Erro interno: ' . $e->getMessage()], 500);
         }
@@ -168,7 +168,7 @@ class VagaController extends BaseController
 
             $vaga->delete();
 
-            return response()->json(['mensagem' => 'Vaga excluída com sucesso'], 200);
+            return response()->json(['mensagem' => 'Vaga excluída com sucesso'], 204);
         } catch (\Exception $e) {
             return response()->json(['mensagem' => 'Erro interno: ' . $e->getMessage()], 500);
         }
