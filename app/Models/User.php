@@ -63,4 +63,13 @@ class User extends Authenticatable implements JWTSubject
         return [];
     }
 
+    public function competencias()
+    {
+        return $this->belongsToMany(Competencia::class, 'competencia_user', 'user_id', 'competencia_id');
+    }
+
+    public function experiencias()
+    {
+        return $this->hasMany(Experiencia::class, 'user_id', 'id');
+    }
 }

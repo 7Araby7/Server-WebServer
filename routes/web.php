@@ -7,6 +7,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CompController;
 use App\Http\Controllers\VagaController;
 use App\Http\Controllers\RamoController;
+use App\Http\Controllers\MensagemController;
 
 /*
 |--------------------------------------------------------------------------
@@ -33,6 +34,10 @@ Route::post('/usuarios/empresa', [UserController::class, 'cadastrarEmp'])->witho
 
 Route::get('/usuario', [UserController::class, 'lerUsuario'])->withoutMiddleware(['web']);
 
+Route::get('/usuario/logado', [UserController::class, 'usuariosLogados'])->withoutMiddleware(['web']);
+
+Route::post('/usuarios/candidatos/buscar', [UserController::class, 'buscarUsuario'])->withoutMiddleware(['web']);
+
 Route::put('/usuario', [UserController::class, 'editarUsuario'])->withoutMiddleware(['web']);
 
 Route::delete('/usuario', [UserController::class, 'apagarUsuario'])->withoutMiddleware(['web']);
@@ -50,3 +55,7 @@ Route::put('/vagas/{id}', [VagaController::class, 'editarVaga'])->withoutMiddlew
 Route::get('/vagas/{id}', [VagaController::class, 'buscarVaga'])->withoutMiddleware(['web']);
 
 Route::delete('/vagas/{id}', [VagaController::class, 'excluirVaga'])->withoutMiddleware(['web']);
+
+Route::post('/mensagem', [MensagemController::class, 'enviarMensagem'])->withoutMiddleware(['web']);
+
+Route::get('/mensagem', [MensagemController::class, 'lerMensagem'])->withoutMiddleware(['web']);

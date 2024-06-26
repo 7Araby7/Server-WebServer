@@ -190,8 +190,13 @@ class VagaController extends BaseController
                 return response()->json(['mensagem' => 'Usuário não encontrado'], 401);
             }
 
-            $empresa_id = $user->id;
-            $vagas = Vaga::where('empresa_id', $empresa_id)->get();
+            if($user->tipo == "candidato"){
+                $vagas = Vaga::where('ativo', 1)->get();
+            }else{
+                $empresa_id = $user->id;
+                $vagas = Vaga::where('empresa_id', $empresa_id)->get();
+            }
+
 
             if ($vagas == '[]') {
                 return response()->json(['mensagem' => 'Nenhuma vaga cadastrada'], 401);

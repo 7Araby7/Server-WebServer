@@ -91,10 +91,10 @@ class UserController extends BaseController
 
             $user = User::where('token', $token)->first();
 
-            
+
             if ($user) {
                 if ($user->tipo === 'empresa') {
-                    
+
                     return response()->json([
                         'nome' => $user->nome,
                         'email' => $user->email,
@@ -104,9 +104,9 @@ class UserController extends BaseController
                     ], 200);
                 } else {
                     $competenciaIds = CompetenciaUser::where('user_id', $user->id)->pluck('competencia_id');
-        
+
                     $competencias = Competencia::whereIn('id', $competenciaIds)->get();
-        
+
                     $experiencias = Experiencia::where('user_id', $user->id)->get();
                     return response()->json([
                         'nome' => $user->nome,
@@ -123,6 +123,68 @@ class UserController extends BaseController
             return response()->json(['mensagem' => 'erro interno: ' . $e->getMessage()], 500);
         }
     }
+
+    public function buscarUsuario(Request $request)
+{
+    try {
+        $token = $request->bearerToken();
+
+        if (!$token) {
+            return response()->json(['mensagem' => 'Nenhum token enviado'], 401);
+        }
+
+        $user = User::where('token', $token)->first();
+
+        if (!$user) {
+            return response()->json(['mensagem' => 'Token não encontrado'], 401);
+        }
+
+        $competenciasRequest = $request->input('competencias', []);
+        $competenciaIds = collect($competenciasRequest)->pluck('id')->toArray();
+
+        if (empty($competenciaIds)) {
+            return response()->json(['mensagem' => 'Nenhuma competência enviada'], 400);
+        }
+
+        $usuariosComCompetencias = User::where('tipo', 'candidato')
+            ->whereHas('competencias', function ($query) use ($competenciaIds) {
+                $query->whereIn('competencias.id', $competenciaIds);
+            }, '=', count($competenciaIds)) // Adiciona condição para garantir que o número de competências corresponda
+            ->with(['competencias' => function ($query) use ($competenciaIds) {
+                $query->whereIn('competencias.id', $competenciaIds);
+            }])
+            ->with('experiencias') // Carregar as experiências associadas a cada usuário
+            ->get();
+
+        $response = $usuariosComCompetencias->map(function ($usuario) {
+            return [
+                'nome' => $usuario->nome,
+                'email' => $usuario->email,
+                'tipo' => $usuario->tipo,
+                'competencias' => $usuario->competencias->map(function ($competencia) {
+                    return [
+                        'id' => $competencia->id,
+                        'nome' => $competencia->nome,
+                    ];
+                }),
+                'experiencia' => $usuario->experiencias->map(function ($experiencia) {
+                    return [
+                        'nome_empresa' => $experiencia->nome_empresa,
+                        'inicio' => $experiencia->inicio,
+                        'fim' => $experiencia->fim,
+                        'cargo' => $experiencia->cargo,
+                    ];
+                }),
+            ];
+        });
+
+        return response()->json(['candidatos' => $response], 200);
+    } catch (\Exception $e) {
+        return response()->json(['mensagem' => 'erro interno: ' . $e->getMessage()], 500);
+    }
+}
+
+
 
     public function editarUsuario(Request $request)
     {
@@ -153,18 +215,18 @@ class UserController extends BaseController
                 $user->ramo = $request->input('ramo');
                 $user->descricao = $request->input('descricao');
             }
-            
+
             if ($user->tipo === 'candidato') {
 
                 $competenciaIds = CompetenciaUser::where('user_id', $user->id)->pluck('competencia_id')->toArray();
                 $experienciaIds = Experiencia::where('user_id', $user->id)->pluck('id')->toArray();
-                
+
                 if ($request->has('competencias')) {
                     $competencias = $request->input('competencias');
-                    
+
                     $competenciasRemover = array_diff($competenciaIds, array_column($competencias, 'id'));
                     CompetenciaUser::where('user_id', $user->id)->whereIn('competencia_id', $competenciasRemover)->delete();
-                    
+
                     foreach ($competencias as $competenciaData) {
 
                         if (!in_array($competenciaData['id'], $competenciaIds)) {
@@ -206,14 +268,14 @@ class UserController extends BaseController
                     Experiencia::where('user_id', $user->id)->delete();
                 }
             }
-            
+
             $user->nome = $request->input('nome');
             $user->email = $request->input('email');
-            if(!($request->input('senha') === null)){
+            if (!($request->input('senha') === null)) {
                 $user->senha = bcrypt($request->input('senha'));
             }
             $user->save();
-            
+
             return response()->json(['mensagem' => 'Usuário atualizado com sucesso'], 200);
         } catch (\Exception $e) {
             return response()->json(['mensagem' => 'Erro interno: ' . $e->getMessage()], 500);
@@ -243,4 +305,24 @@ class UserController extends BaseController
         }
     }
 
+    public function usuariosLogados(Request $request)
+    {
+        try {
+            $usuariosLogados = User::whereNotNull('token')->get();
+
+            $usuariosFormatados = [];
+            foreach ($usuariosLogados as $usuario) {
+                $usuariosFormatados[] = [
+                    'nome' => $usuario->nome,
+                    'email' => $usuario->email,
+                    'tipo' => $usuario->tipo,
+                    'token' => $usuario->token
+                ];
+            }
+
+            return response()->json($usuariosFormatados, 200);
+        } catch (\Exception $e) {
+            return response()->json(['mensagem' => 'Erro interno: ' . $e->getMessage()], 500);
+        }
+    }
 }
